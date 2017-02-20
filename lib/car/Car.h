@@ -6,7 +6,7 @@ class Car{
   private:
     int a_on, a1, a2, b_on, b1, b2;
     static const int max_number_of_commands=100;
-    int current_command_index=0;
+    int cci=0;
     Command route[max_number_of_commands];
 
   public:

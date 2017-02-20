@@ -6,7 +6,7 @@
 
 UartSerialComm uartComm(11, 10, 9600);//rx,tx,baud
 Car car(1, 3, 2, 6, 5, 4);
-HS_SR04 ultraSonicSensor(8,9);//triggerPin, echoPin
+//HS_SR04 ultraSonicSensor(8,9);//triggerPin, echoPin
 
 void setup() {
   Serial.begin(9600);
@@ -15,9 +15,9 @@ void setup() {
 
 void loop(){
 
-  long dist = ultraSonicSensor.getDistInCm();
+  //long dist = ultraSonicSensor.getDistInCm();
 
-  Serial.println(dist);
+  //Serial.println(dist);
 
   Command cmd = uartComm.getCommand();
   car.drive(cmd);

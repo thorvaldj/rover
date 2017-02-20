@@ -2,6 +2,10 @@
 
 Car::Car(int a_on, int a1, int a2, int b_on, int b1, int b2):
 a_on(a_on), a1(a1), a2(a2), b_on(b_on), b1(b1), b2(b2) {
+
+  for( int i = 0; i < this->max_number_of_commands; ++i )
+    this->route[i] = Command{ NONE, 0 };
+
   //initialize the output pins to control the four motors
   pinMode(a_on, OUTPUT);
   pinMode(a1, OUTPUT);
@@ -15,18 +19,24 @@ a_on(a_on), a1(a1), a2(a2), b_on(b_on), b1(b1), b2(b2) {
 }
 
 void Car::addCommandToRoute(Command cmd){
-  current_command_index++;
-  int shifted_index = current_command_index%max_number_of_commands;
-  route[shifted_index] = cmd;
+  this->cci = (this->cci + 1) % max_number_of_commands;
+  this->route[this->cci] = cmd;
 }
 
 void Car::rewindRoute(){
   Serial.println("rewinding");
-  while(current_command_index>0){
-    int shifted_index = current_command_index%max_number_of_commands;
+  int shifted_index = this->cci;
+  do {
     Command cmd = route[shifted_index];
-    Serial.println(cmd.operation);
-    Serial.println(cmd.value);
+
+    if( cmd.operation == NONE ) break;
+
+    auto out = String( shifted_index )
+             + " :: "
+             + String( cmd.operation )
+             + " :: "
+             + String( cmd.value );
+    Serial.println(out);
     switch (cmd.operation) {
       case FORWARD: reverse(cmd.value); break;
       case REVERSE: forward(cmd.value); break;
@@ -34,9 +44,12 @@ void Car::rewindRoute(){
       case RIGHT: left(cmd.value); break;
       default: break;
     }
+    
     delay(500);
-    current_command_index--;
-  }
+    if( --shifted_index < 0 )
+      shifted_index += max_number_of_commands;
+  } while (shifted_index != this->cci);
+  this->route[ this->cci ].operation = NONE;
 }
 
 void Car::drive(Command cmd){

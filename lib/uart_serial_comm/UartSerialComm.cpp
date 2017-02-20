@@ -38,6 +38,8 @@ String UartSerialComm::readUartSerial(){
   String serial_in="";
   if(serial.available()){
     serial_in  = serial.readStringUntil('\\');
+    Serial.println(serial_in);
+
     serial.flush();
   }
   return serial_in;
